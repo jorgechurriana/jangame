@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>Frutituti</title>
+<style>
+canvas { border:0px;    background-color: #000000; }
+</style>
+</head>
+
+<script src="jangame.js"></script><script>
+
+// EL JUEGO EN SI
+
+function Preload() {
+  Ifondo=new Img("img/hexagonos.jpg");
+  t1=new Img("img/frutituti.png");
+	j1=new Img("img/bicho_azul.png");
+	j2=new Img("img/bicho_verde.png");
+
+	Icereza=new Img("img/cerezas.png");
+	Iuvas=new Img("img/uvas.png");
+	Icerezap=new Img("img/cerezasp.png");
+	Iuvasp=new Img("img/uvasp.png");
+
+	sonido=new Sound("fx/eat.mp3");
+
+	
+}
+
+function Setup() {
+
+	puntos1=0;
+	puntos2=0;
+
+  fondo=new Sprite(Ifondo,400,300);
+  fondo.size=0.8;
+	jugador1=new Sprite(j1,50,50);
+	jugador2=new Sprite(j2,550,50);
+	//jugador2.alpha=0.5;
+	jugador1.collidef=jugador2.collidef=0.5;
+
+  Game.load(pantalla_inicio);
+}
+
+var frutas=[];
+var c=[];
+
+function pantalla_inicio()
+{
+  Game.clear();
+  Game.paint(t1,400,200,100,100);
+  Game.text("Pulsa espacio para empezar",50,500);
+
+  if (keys[KEY_SPACE]) {
+    
+    jugador1.goto(50,50);
+		jugador1.size=1;
+    jugador2.goto(550,50);
+		jugador2.size=1;
+    puntos1=puntos2=0;
+    frutas=[];
+    for (i=0; i<3; i++)
+    {
+      frutas.push(new Sprite(Iuvas,Math.random()*800,Math.random()*600));
+      frutas.push(new Sprite(Icereza,Math.random()*800,Math.random()*600));
+      //frutas.push(new Sprite(Iuvasp,Math.random()*800,Math.random()*600));
+      //frutas.push(new Sprite(Icerezap,Math.random()*800,Math.random()*600));
+    }
+    Game.load(juego);
+    
+  }
+}
+
+
+//inicia_partida();
+var D=[-45,0,45, -90,0,90, 215,180,135];
+
+function juego() {
+	Game.clear();
+	vx=0; vy=0;
+  
+  if (keys[KEY_LEFT]) {vx=-1;}
+	if (keys[KEY_RIGHT]) {vx=1;}
+	if (keys[KEY_UP]) {vy=-1;}
+	if (keys[KEY_DOWN]) {vy=1;}
+	jugador1.x+=vx*jugador1.size;
+	jugador1.y+=vy*jugador1.size;
+	if ((vx!=0) || (vy!=0)) jugador1.dir=D[vx+1+((vy+1)*3)];
+
+	vx=0; vy=0;
+	if (keys[KEY_A]) {vx=-1; }
+	if (keys[KEY_D]) {vx=1; }
+	if (keys[KEY_W]) {vy=-1; }
+	if (keys[KEY_S]) {vy=1; }
+	jugador2.x+=vx*jugador2.size;
+	jugador2.y+=vy*jugador2.size;
+	if ((vx!=0) || (vy!=0)) jugador2.dir=D[vx+1+((vy+1)*3)];
+
+
+  
+	Game.update();
+	Game.text("Puntos:"+puntos1,0,0);
+  Game.text("Puntos:"+puntos2,500,5);
+	
+  frutas.forEach(function (fruta, index) {
+	  if (fruta.collide(jugador1)) {
+			delete frutas[index];
+			fruta.del();
+      sonido.play();
+      puntos1=puntos1+1;
+			//jugador1.size*=1.2;
+	  }
+
+	  if (fruta.collide(jugador2)) {
+			delete frutas[index];
+	    fruta.del();
+      sonido.play();
+      puntos2=puntos2+1;
+			//jugador2.size*=1.2;
+	  }
+  });	
+
+	if (puntos1+puntos2==6)
+  {
+    Game.load(pantalla_inicio);
+  }
+	  
+
+}
+</script>
+
+<body>
+<canvas id="GAMECANVAS" width=800 height=600></canvas>
+<br><button onclick="Game.canvas.requestFullscreen();">Full Canvas</button>
+</body></html>

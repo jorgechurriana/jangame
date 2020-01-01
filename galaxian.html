@@ -1,0 +1,92 @@
+<html>
+<head><title>Pong</title></head>
+
+<script src="jangame.js"></script><script>
+
+
+// EL JUEGO EN SI
+function Preload() {
+  Inave=new Box(20,40,"white");
+	Idisparo=new Box(2,10,"red");
+	Ialien1=new Box(30,30,"yellow");
+	Ialien2=new Box(30,30,"green");
+}
+
+function Setup() {
+	jugador=new Sprite(Inave,200,350);
+  Game.load(juego);
+	
+	for (i=50; i<=350; i+=50)
+	{
+	  new Alien(Ialien1,i,50,10);
+	  new Alien(Ialien2,i,100,5);
+	}
+}
+
+
+class Disparo extends Sprite {
+  constructor(x,y){
+	  super(Idisparo,x,y);
+		this.vx=0;
+		this.vy=-4;
+  }  
+
+	update(){
+	  console.log(this.clase);
+	  super.update();
+		if (this.y<0) {this.activo=false;}
+		
+		var l=Sprite.all;
+		for (var i=0; i<l.length; i++)
+		{
+			if ( l[i].clase=="ALIEN" && this.collide(l[i]) ) {
+			  l[i].hit();
+				this.activo=false;
+			}
+		}
+	}
+}
+
+class Alien extends Sprite {
+  constructor(i,x,y,puntos){
+	  super(i,x,y);
+		this.clase="ALIEN"
+		this.vx=0.1;
+		this.b=0;
+		this.puntos=puntos;
+  }  
+
+	update(){
+	  super.update();
+		this.b++; if (this.b>=150) {this.b=0; this.vx*=-1;}
+	}
+	
+	hit(){puntos+=this.puntos; this.live=20; this.valpha=-0.05; this.vx=1; this.vy=-1; this.clase="MUERTO"}
+	
+}
+
+
+
+puntos=0;
+espera=0;
+function juego() {
+  Game.clear();
+	if (keys[KEY_RIGHT]) {jugador.x+=2; }
+	if (keys[KEY_LEFT]) {jugador.x-=2; }
+  if (keys[KEY_SPACE] && espera==0) { 
+    new Disparo(jugador.x+0, jugador.y-50);
+		espera=20;
+	}
+  if (espera>0) espera--;
+
+	
+	Game.update();
+	Game.text(puntos,0,0);
+}
+</script>
+
+<body>
+PONG<br>
+<canvas id="GAMECANVAS" width=400 height=400></canvas>
+<br><button onclick="Game.canvas.requestFullscreen();">Full Canvas</button>
+</body></html>

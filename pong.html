@@ -1,0 +1,32 @@
+<html>
+<head><title>Pong</title></head>
+
+<script src="jangame.js"></script><script>
+// EL JUEGO EN SI
+function Setup() {
+	pala=new Box(30,80,"white");
+
+	jugador1=new Sprite(pala,30,100);
+	jugador2=new Sprite(pala,770,100);
+  Game.load(juego);
+}
+
+function juego() {
+  Game.clear();
+	if (keys[KEY_S]) {jugador1.y+=2; }
+	if (keys[KEY_W]) {jugador1.y-=2; }
+
+	if (keys[KEY_DOWN]) {jugador2.y+=2; }
+	if (keys[KEY_UP]) {jugador2.y-=2; }
+	
+	Game.update();
+	Game.text("0",0,0);
+	Game.text("0",700,0);
+}
+</script>
+
+<body>
+PONG<br>
+<canvas id="GAMECANVAS" width=800 height=600></canvas>
+<br><button onclick="Game.canvas.requestFullscreen();">Full Canvas</button>
+</body></html>
