@@ -3,25 +3,46 @@
 
 <script src="jangame.js"></script><script>
 // EL JUEGO EN SI
-function Setup() {
-	pala=new Box(30,80,"white");
 
-	jugador1=new Sprite(pala,30,100);
+LYP=80;
+VPELOTA=3;
+VPALA=5;
+
+function Setup() {
+	pala=new Box(30,LYP,"white");
+
+
+	click=new Sound("fx/click.mp3");
+	fail=new Sound("fx/fail.mp3");
+  
+  ball=new Sprite(new Box(20,20,"white"),400,300);
+  ball.vx=VPELOTA;
+  ball.vy=VPELOTA;
+  
+	puntos1=0;
+  puntos2=0;
+  jugador1=new Sprite(pala,30,100);
 	jugador2=new Sprite(pala,770,100);
   Game.load(juego);
 }
 
 function juego() {
   Game.clear();
-	if (keys[KEY_S]) {jugador1.y+=2; }
-	if (keys[KEY_W]) {jugador1.y-=2; }
+	if (keys[KEY_S]) {jugador1.y+=VPALA; }
+	if (keys[KEY_W]) {jugador1.y-=VPALA; }
 
-	if (keys[KEY_DOWN]) {jugador2.y+=2; }
-	if (keys[KEY_UP]) {jugador2.y-=2; }
+	if (keys[KEY_DOWN]) {jugador2.y+=VPALA; }
+	if (keys[KEY_UP]) {jugador2.y-=VPALA; }
+
+  if (ball.y>580 || ball.y<0) {ball.vy*=-1; click.play();}
+  if (ball.x>800) {ball.x=400; ball.y=300; puntos1++; fail.play();}
+  if (ball.x<0) {ball.x=400; ball.y=300; puntos2++; fail.play();}
+  if (ball.collide(jugador1) || ball.collide(jugador2)) {ball.vx*=-1; click.play();}
+
 	
 	Game.update();
-	Game.text("0",0,0);
-	Game.text("0",700,0);
+	Game.text(puntos1,0,0);
+	Game.text(puntos2,700,0);
 }
 </script>
 
